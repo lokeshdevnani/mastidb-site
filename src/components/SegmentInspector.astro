@@ -14,7 +14,7 @@ import { ColumnExplorer } from './ColumnExplorer';
         Look inside a segment file (.mastidb)
       </h2>
       <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure mb-6">
-        In MastiDB, every column is stored on disk in two dedicated files: a 40-byte binary metadata header and a memory-mapped payload file. The payload organizes dictionary offsets, raw UTF-8 strings, fixed-width row IDs, and serialized Roaring Bitmaps into one continuous address space.
+        Every column is stored on disk as two files: a 40-byte binary header and a memory-mapped payload. Hover any region below to trace a value from the logical table down to the bytes that hold it.
       </p>
 
       <!-- Short, crisp bullet points right after section paragraph per user request -->
@@ -25,11 +25,11 @@ import { ColumnExplorer } from './ColumnExplorer';
         </li>
         <li class="flex items-start gap-2.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[var(--brand)] mt-2 shrink-0"></span>
-          <span><strong class="text-[var(--ink)] font-semibold">Contiguous address space:</strong> Packs dictionary offsets, sorted UTF-8 values, encoded row IDs, and Roaring Bitmaps back-to-back with zero wasted padding.</span>
+          <span><strong class="text-[var(--ink)] font-semibold">Contiguous address space:</strong> Dictionary offsets, sorted UTF-8 values, encoded row IDs, and Roaring Bitmaps sit back-to-back, with no padding between them.</span>
         </li>
         <li class="flex items-start gap-2.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[var(--brand)] mt-2 shrink-0"></span>
-          <span><strong class="text-[var(--ink)] font-semibold">O(1) arithmetic addressing:</strong> Fixed 4-byte integers enable row <em class="italic">i</em> lookups via direct math (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">offset + i × 4</code>) without pointer chasing or B-Trees.</span>
+          <span><strong class="text-[var(--ink)] font-semibold">O(1) arithmetic addressing:</strong> Because every row ID is exactly 4 bytes, row <em class="italic">i</em> is found by arithmetic (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">offset + i × 4</code>). No index to walk, no pointers to follow.</span>
         </li>
       </ul>
     </div>

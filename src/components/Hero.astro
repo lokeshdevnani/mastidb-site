@@ -14,10 +14,10 @@ import { HeroTerminal } from './HeroTerminal';
     </div>
 
     <!-- Hero Composition Grid (Desktop: Left Copy lg:col-span-7, Right Terminal lg:col-span-5 with overlapping Mascot) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-10 xl:gap-12 items-center">
       
       <!-- Left Column: Headline, Narrative, CTAs & Feature Pills (lg:col-span-7) -->
-      <div class="lg:col-span-7 flex flex-col justify-center">
+      <div class="xl:col-span-7 flex flex-col justify-center">
         <h1 class="font-extrabold tracking-tight text-[var(--ink)] text-4xl sm:text-5xl lg:text-[3.5rem] leading-[1.08] mb-5">
           A serious OLAP <br class="hidden sm:inline" />
           database engine. <br />
@@ -25,7 +25,7 @@ import { HeroTerminal } from './HeroTerminal';
         </h1>
 
         <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed mb-7 max-w-xl">
-          MastiDB is a small, fast, columnar database engine written in Python. It helps you understand how modern analytical databases work — by actually implementing the ideas.
+          MastiDB is a small, fast, columnar database engine written in Python. It exists to show how modern analytical databases work, by implementing the ideas rather than describing them.
         </p>
 
         <!-- Primary & Secondary CTAs matching mock -->
@@ -96,7 +96,7 @@ import { HeroTerminal } from './HeroTerminal';
       </div>
 
       <!-- Mobile/Tablet Mascot view (visible only on < lg) -->
-      <div class="lg:hidden flex flex-col items-center justify-center my-2">
+      <div class="xl:hidden flex flex-col items-center justify-center my-2">
         <div class="relative flex flex-col items-center">
           <div class="bg-white border border-[var(--line)] px-3 py-1 rounded-full text-xs font-bold text-[var(--brand)] shadow-sm mb-2 flex items-center gap-1">
             <span>Same data. More Masti!</span>
@@ -114,10 +114,10 @@ import { HeroTerminal } from './HeroTerminal';
       </div>
 
       <!-- Right Column: Interactive Terminal + Overlapping Desktop Mascot + Pipeline Card (lg:col-span-5) -->
-      <div class="lg:col-span-5 relative w-full flex flex-col gap-4">
+      <div class="xl:col-span-5 relative w-full flex flex-col gap-4">
         
         <!-- Desktop Mascot: Overlaps with left of terminal window per mock.png -->
-        <div class="hidden lg:block absolute -left-28 xl:-left-36 bottom-24 z-30 pointer-events-none select-none">
+        <div class="hidden xl:block absolute -left-52 bottom-24 z-30 pointer-events-none select-none">
           <div class="relative flex flex-col items-center">
             <!-- Speech / callout text pointing down to mascot -->
             <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xs border border-[var(--line)] px-3 py-0.5 rounded-full text-[11px] font-bold text-[var(--brand)] shadow-sm whitespace-nowrap flex items-center gap-1">
@@ -129,7 +129,7 @@ import { HeroTerminal } from './HeroTerminal';
               alt="MastiDB Mascot pointing to terminal"
               width="360"
               height="340"
-              class="w-[230px] xl:w-[260px] h-auto object-contain drop-shadow-md"
+              class="w-[260px] h-auto object-contain drop-shadow-md"
               loading="eager"
             />
           </div>

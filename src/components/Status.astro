@@ -10,7 +10,7 @@
         PROJECT STATUS
       </div>
       <h2 class="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-4">
-        Where it stands: capabilities & limitations
+        Where it stands today
       </h2>
       <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
         MastiDB is an experimental project built for learning. It is not meant for production, and it is not trying to compete with mature columnar systems.
@@ -79,13 +79,13 @@
           </div>
 
           <h3 class="text-xl font-bold text-[var(--ink)] mb-4">
-            Honest rough edges & next questions
+            Known rough edges
           </h3>
 
           <ul class="space-y-3.5 text-sm text-[var(--muted)] mb-6">
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
-              <span><strong>Everything is a string:</strong> every column uses <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">DIMENSION</code> encoding today. Real numeric types are on the roadmap, so <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">SUM</code> and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">AVG</code> parse strings per row.</span>
+              <span><strong>Everything is a string:</strong> every column uses <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">DIMENSION</code> encoding today, so <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">SUM</code> and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">AVG</code> parse a string on every row. Real numeric types are on the roadmap.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
@@ -134,7 +134,7 @@
             Experimental Playground
           </h4>
           <p class="text-xs sm:text-sm text-[var(--muted)] leading-relaxed max-w-xl">
-            MastiDB is a playground for ideas, not a production system (yet). Expect rough edges, missing features, and an evolving API.
+            Expect rough edges, missing features, and an API that still moves. Ideas, bug reports, and patches are all welcome.
           </p>
         </div>
       </div>

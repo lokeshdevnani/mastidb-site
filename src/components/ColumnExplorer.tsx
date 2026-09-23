@@ -72,7 +72,7 @@ export function ColumnExplorer() {
                 Logical Table Editor
               </h3>
               <span className="text-[11px] font-mono text-[var(--brand)] font-medium">
-                Live React Sandbox
+                Editable
               </span>
             </div>
 
@@ -148,7 +148,7 @@ export function ColumnExplorer() {
                 </span>
               ) : (
                 <span>
-                  The table is shredded into columnar components. Hover any byte region on the right to trace pointers backwards into the logical rows.
+                  The table is split into columns and encoded. Hover any byte region on the right to trace it back to the rows it came from.
                 </span>
               )}
             </div>

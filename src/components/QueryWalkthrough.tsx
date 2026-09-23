@@ -15,7 +15,7 @@ const STAGES: Stage[] = [
     title: 'Parse Query',
     badge: 'AST Analysis',
     subtitle: 'ParsedQuery derives minimal dependencies',
-    explanation: 'The SQL string is parsed into an abstract syntax tree. ParsedQuery computes the dependent columns needed: countryName and cityName. All other columns on disk are completely ignored.',
+    explanation: 'The SQL string is parsed into an abstract syntax tree. ParsedQuery computes the dependent columns needed: countryName and cityName. Every other column on disk is left untouched.',
     whyFast: 'No unnecessary columns are read. The engine knows before touching disk exactly which two column files will participate.',
   },
   {
@@ -122,7 +122,7 @@ export function QueryWalkthrough() {
               Follow a query through the engine
             </h2>
             <p className="text-base sm:text-lg text-[var(--muted)] prose-measure">
-              Step through a faithful trace of an analytical query. Watch how MastiDB uses bitmaps and integer dictionaries to avoid scanning rows or allocating strings.
+              Step through what MastiDB actually does with one analytical query, from SQL text to result. Bitmaps and integer dictionaries let it skip both the row scan and the string building.
             </p>
           </div>
 
@@ -281,7 +281,7 @@ export function QueryWalkthrough() {
         {/* ------------------------------------------------------------------- */}
         {/* DESKTOP VIEW (hidden lg:grid): Interactive side-by-side guided tool */}
         {/* ------------------------------------------------------------------- */}
-        <div className="hidden lg:grid grid-cols-12 gap-8 items-start">
+        <div className="hidden lg:grid grid-cols-12 gap-8 items-stretch">
           
           {/* Left Column: Stage Selector & Explanations (5 cols) */}
           <div className="col-span-5 flex flex-col gap-3">
@@ -355,7 +355,7 @@ export function QueryWalkthrough() {
 
           {/* Right Column: Visual Stage Simulation (7 cols) */}
           <div className="col-span-7">
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-lg overflow-hidden min-h-[460px] flex flex-col">
+            <div className="h-full rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-lg overflow-hidden min-h-[460px] flex flex-col">
               {/* Visual Panel Titlebar */}
               <div className="px-5 py-3.5 bg-[var(--surface-tint)] border-b border-[var(--line)] flex items-center justify-between">
                 <div className="flex items-center gap-2">

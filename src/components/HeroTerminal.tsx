@@ -14,7 +14,7 @@ export function HeroTerminal() {
     }
   };
 
-  const cliCode = `# 1. Install via pip (compiles hot modules with MyPyC)
+  const cliCode = `# 1. Install (MyPyC-compiled hot loops)
 pip install mastidb
 
 # 2. Ingest Wikipedia sample (~24k edits)
@@ -22,7 +22,9 @@ mastidb demo wikipedia
 
 # 3. Fast columnar query execution
 mastidb query -d /tmp/wikipedia \\
-    "SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName"`;
+    "SELECT cityName, COUNT(id)
+     WHERE countryName = 'India'
+     GROUP BY cityName"`;
 
   const pythonCode = `# Embedded analytical query execution in Python
 from mastidb import Table, QueryExecutor
@@ -32,7 +34,9 @@ table = Table.from_data_dir('/tmp/wikipedia')
 executor = QueryExecutor(table)
 
 results = executor.execute(
-    "SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName LIMIT 5"
+    "SELECT cityName, COUNT(id)
+     WHERE countryName = 'India'
+     GROUP BY cityName LIMIT 5"
 )
 
 # Output arrives as decoded matrix
@@ -109,7 +113,7 @@ print(results.get_results())
         {tab === 'cli' ? (
           <div className="space-y-3 whitespace-pre font-mono">
             <div>
-              <span className="text-slate-500"># 1. Install via pip (compiles hot modules with MyPyC)</span>
+              <span className="text-slate-500"># 1. Install (MyPyC-compiled hot loops)</span>
               <div className="flex items-center justify-between text-slate-100">
                 <span><span className="text-indigo-400 select-none">$ </span>pip install mastidb</span>
               </div>
@@ -127,15 +131,19 @@ print(results.get_results())
               <div className="text-slate-100">
                 <span className="text-indigo-400 select-none">$ </span>mastidb query -d /tmp/wikipedia \
                 <br />
-                <span className="text-amber-300">    "SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName"</span>
+                <span className="text-amber-300">    "SELECT cityName, COUNT(id)</span>
+                <br />
+                <span className="text-amber-300">     WHERE countryName = 'India'</span>
+                <br />
+                <span className="text-amber-300">     GROUP BY cityName"</span>
               </div>
             </div>
 
             {/* Plausible output block */}
             <div className="mt-3 p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs">
               <div className="text-slate-400 pb-1.5 border-b border-slate-800 flex justify-between">
-                <span>MastiDB ResultSet (3 rows returned in 12ms)</span>
-                <span className="text-emerald-400 font-semibold">Bitmap Match: 79 rows</span>
+                <span>ResultSet · 3 rows · 12ms</span>
+                <span className="text-emerald-400 font-semibold">79 matched</span>
               </div>
               <div className="pt-2 text-slate-200">
                 <div>cityName    │ COUNT(id)</div>
@@ -155,7 +163,9 @@ print(results.get_results())
             <div>executor = QueryExecutor(table)</div>
             <div className="py-1">
               <div>results = executor.execute(</div>
-              <div className="pl-4 text-emerald-300">"SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName LIMIT 5"</div>
+              <div className="pl-4 text-emerald-300">"SELECT cityName, COUNT(id)</div>
+              <div className="pl-4 text-emerald-300"> WHERE countryName = 'India'</div>
+              <div className="pl-4 text-emerald-300"> GROUP BY cityName LIMIT 5"</div>
               <div>)</div>
             </div>
             <div className="text-slate-600 py-1"># Output arrives as decoded matrix</div>

@@ -30,7 +30,7 @@ const techniques: Technique[] = [
     title: "Roaring Bitmap Indexing",
     problem: "Checking a WHERE clause row by row means reading every row in the table.",
     solution: "Ingestion builds a compressed Roaring Bitmap for every distinct value. An equality filter is then one bitmap lookup, and AND and OR are bitwise intersection and union.",
-    tradeoff: "The bitmaps add roughly 15-40% to segment size, and filtering is equality-only today - ranges and inequalities are not indexed yet.",
+    tradeoff: "The bitmaps add roughly 15 to 40% to segment size. Filtering is equality-only today; ranges and inequalities are not indexed yet.",
     docAnchor: "42-filtering-where-becomes-one-bitmap"
   },
   {
@@ -45,7 +45,7 @@ const techniques: Technique[] = [
     number: "05",
     title: "Mergeable Partial Aggregation",
     problem: "Every segment has its own dictionary, so partial results from two segments cannot simply be concatenated.",
-    solution: "Each segment returns an AggregatePartial whose merge() is associative and commutative - AVG, for instance, carries (sum, count) until the very end - so partials from any number of segments combine safely.",
+    solution: "Each segment returns an AggregatePartial whose merge() is associative and commutative. AVG, for instance, carries (sum, count) until the very end, so partials from any number of segments combine safely.",
     tradeoff: "Group keys have to be decoded to strings before they cross a segment boundary, since two segments map the same string to different IDs.",
     docAnchor: "5-aggregate-queries-in-detail"
   },
@@ -69,10 +69,10 @@ const techniques: Technique[] = [
         DESIGN TRADE-OFFS
       </div>
       <h2 class="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-4">
-        Core engine techniques & trade-offs
+        Core engine techniques
       </h2>
       <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
-        Every design choice here trades speed against space against complexity. For each one: the problem it solves, what MastiDB does about it, and what that costs.
+        Every design choice here trades speed, space, and complexity against each other. For each one: the problem it solves, what MastiDB does about it, and what that costs.
       </p>
     </div>
 
