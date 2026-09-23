@@ -20,5 +20,6 @@ Thumbs.db
 # Internal brief & raw generator mocks
 mastidb-website-agent-brief.md
 assets/
+scripts/
 
 .vercel
