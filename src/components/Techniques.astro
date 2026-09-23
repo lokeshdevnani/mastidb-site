@@ -1,0 +1,139 @@
+---
+interface Technique {
+  number: string;
+  title: string;
+  problem: string;
+  solution: string;
+  tradeoff: string;
+  docAnchor: string;
+}
+
+const techniques: Technique[] = [
+  {
+    number: "01",
+    title: "Columnar Segments & Fixed Addressing",
+    problem: "Row-oriented storage wastes massive I/O scanning irrelevant attributes on analytical queries.",
+    solution: "Separates every column into dedicated immutable files. Stores row IDs as fixed 4-byte integers so row i is resolved arithmetically (offset + i * 4) with zero index traversals.",
+    tradeoff: "Always charges 4 bytes per row even for low-cardinality columns. Poor fit for single-row OLTP transactions.",
+    docAnchor: "2-storage-architecture"
+  },
+  {
+    number: "02",
+    title: "Sorted Dictionary Encoding",
+    problem: "String allocations and comparisons in Python crush CPU cache locality and inflate memory footprints.",
+    solution: "Deduplicates strings into an order-preserving, sorted dictionary. Queries find values via O(log N) binary search, and ORDER BY on string columns sorts integers without touching a string.",
+    tradeoff: "High-cardinality columns inflate dictionary overhead. Numeric columns are currently stored as strings, requiring per-row float parsing.",
+    docAnchor: "24-the-payload-file-five-sections-back-to-back"
+  },
+  {
+    number: "03",
+    title: "Roaring Bitmap Indexing",
+    problem: "Evaluating WHERE predicates sequentially forces expensive full-table scans across millions of rows.",
+    solution: "Builds a compressed Roaring Bitmap for every distinct value during ingestion. Equality filters resolve in O(1) bitset lookups; AND and OR become fast bitwise intersections and unions.",
+    tradeoff: "Adds 13% to 40% space overhead at ingest time. Filtering is equality-only today; range scans and inequalities are not yet indexed.",
+    docAnchor: "42-filtering-where-becomes-one-bitmap"
+  },
+  {
+    number: "04",
+    title: "Late Materialization",
+    problem: "De-referencing strings for intermediate rows burns memory bandwidth and triggers costly garbage collection.",
+    solution: "Maintains columns as integer IDs through filtering, grouping, and bounded min-heap sorting. Only rows surviving LIMIT or unique output groups are decoded back to strings.",
+    tradeoff: "Non-aggregate queries with large LIMITs require random seeks across dictionary files to materialize projected columns.",
+    docAnchor: "44-the-value-matrix-the-one-place-data-is-materialized"
+  },
+  {
+    number: "05",
+    title: "Mergeable Partial Aggregation",
+    problem: "Multi-segment or parallel execution requires clean composition without corrupting segment-local dictionaries.",
+    solution: "Each segment computes an AggregatePartial with associative, commutative merge() contracts (e.g. AVG preserves (sum, count) until finalization). Partials merge cleanly.",
+    tradeoff: "Group keys must be decoded to strings before crossing segment boundaries to merge correctly across segments with different dictionary mappings.",
+    docAnchor: "5-aggregate-queries-in-detail"
+  },
+  {
+    number: "06",
+    title: "MyPyC Ahead-of-Time Compilation",
+    problem: "Standard Python bytecode execution and dynamic dispatch create massive overhead in tight numerical loops.",
+    solution: "Type-annotates critical inner loops and compiles them into native C extensions using MyPyC, cutting runtime by ~60% with zero algorithm changes.",
+    tradeoff: "Requires a C compiler during pip install (falls back to pure Python if unavailable). Enforces strict static type constraints.",
+    docAnchor: "8-where-the-time-actually-goes"
+  }
+];
+---
+
+<section id="techniques" class="section-spacing border-b border-[var(--line)] bg-[var(--surface)]">
+  <div class="site-container">
+    
+    <!-- Header -->
+    <div class="max-w-3xl mb-12">
+      <div class="text-xs font-mono font-bold tracking-widest uppercase text-[var(--brand)] mb-3">
+        DELIBERATE DECISIONS
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-4">
+        Core engine techniques & trade-offs
+      </h2>
+      <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
+        Every database design choice is an explicit trade between speed, space, and implementation complexity. Here is what MastiDB does, what it buys, and what it costs.
+      </p>
+    </div>
+
+    <!-- Scannable Cards Grid (3x2 on desktop) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      {techniques.map((t) => (
+        <div class="p-6 sm:p-7 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm hover:border-[var(--brand)]/30 hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <!-- Card Number & Title -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[var(--surface-tint)] text-[var(--muted)] border border-[var(--line)]">
+                {t.number}
+              </span>
+              <a
+                href={`https://github.com/lokeshdevnani/mastidb/blob/main/ARCHITECTURE.md#${t.docAnchor}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-xs font-mono text-[var(--brand)] hover:underline flex items-center gap-1"
+              >
+                <span>Docs</span>
+                <span>↗</span>
+              </a>
+            </div>
+
+            <h3 class="text-lg font-bold text-[var(--ink)] mb-4 leading-snug">
+              {t.title}
+            </h3>
+
+            <!-- What problem arises -->
+            <div class="mb-3.5">
+              <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--muted)] mb-1">
+                The Problem
+              </div>
+              <p class="text-xs text-[var(--ink)] leading-relaxed">
+                {t.problem}
+              </p>
+            </div>
+
+            <!-- What MastiDB does -->
+            <div class="mb-3.5">
+              <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--brand)] mb-1">
+                What MastiDB Does
+              </div>
+              <p class="text-xs text-[var(--ink)] leading-relaxed">
+                {t.solution}
+              </p>
+            </div>
+          </div>
+
+          <!-- What it costs or limits -->
+          <div class="mt-4 pt-3.5 border-t border-[var(--line)] bg-[var(--surface-tint)] -mx-6 -mb-6 p-4 rounded-b-2xl">
+            <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--encoded-coral)] mb-1">
+              The Cost / Limitation
+            </div>
+            <p class="text-xs text-[var(--muted)] leading-relaxed">
+              {t.tradeoff}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>

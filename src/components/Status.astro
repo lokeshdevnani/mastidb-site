@@ -1,0 +1,125 @@
+---
+---
+
+<section id="status" class="section-spacing border-b border-[var(--line)] bg-[var(--surface-tint)]">
+  <div class="site-container">
+    
+    <!-- Header -->
+    <div class="max-w-3xl mb-12">
+      <div class="text-xs font-mono font-bold tracking-widest uppercase text-[var(--brand)] mb-3">
+        ENGINEERING STATUS
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-4">
+        Where it stands: capabilities & limitations
+      </h2>
+      <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
+        MastiDB is an experimental project designed for learning and exploration. It is neither intended for production use nor positioned to compete with mature columnar systems.
+      </p>
+    </div>
+
+    <!-- Status Split Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      
+      <!-- Column 1: What Works & Measured Gains -->
+      <div class="p-7 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--result-green-bg)] border border-[var(--result-green-border)] text-xs font-mono font-bold text-[var(--result-green)] mb-5">
+            <span>●</span>
+            <span>CURRENT CAPABILITIES</span>
+          </div>
+
+          <h3 class="text-xl font-bold text-[var(--ink)] mb-4">
+            What works today
+          </h3>
+
+          <ul class="space-y-3.5 text-sm text-[var(--muted)] mb-6">
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--result-green)] font-bold shrink-0">✓</span>
+              <span><strong>Supported SQL:</strong> <code class="font-mono text-xs bg-[var(--surface-tint)] px-1.5 py-0.5 rounded text-[var(--ink)]">SELECT</code>, <code class="font-mono text-xs bg-[var(--surface-tint)] px-1.5 py-0.5 rounded text-[var(--ink)]">WHERE</code> (equality, AND, OR), <code class="font-mono text-xs bg-[var(--surface-tint)] px-1.5 py-0.5 rounded text-[var(--ink)]">GROUP BY</code>, <code class="font-mono text-xs bg-[var(--surface-tint)] px-1.5 py-0.5 rounded text-[var(--ink)]">ORDER BY</code>, <code class="font-mono text-xs bg-[var(--surface-tint)] px-1.5 py-0.5 rounded text-[var(--ink)]">LIMIT</code>, and aggregations (<code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">COUNT</code>, <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">SUM</code>, <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">AVG</code>).</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--result-green)] font-bold shrink-0">✓</span>
+              <span><strong>Two-pass execution:</strong> late materialization delays string decoding until top-K row IDs are identified via bounded min-heaps.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--result-green)] font-bold shrink-0">✓</span>
+              <span><strong>Independent segments:</strong> horizontal segment splits execute queries independently and produce mergeable partial results.</span>
+            </li>
+          </ul>
+
+          <div class="pt-5 border-t border-[var(--line)]">
+            <div class="text-xs font-mono font-bold uppercase text-[var(--ink)] mb-2">
+              Measured Iteration Gains (1.3M NYPL rows)
+            </div>
+            <p class="text-xs text-[var(--muted)] leading-relaxed">
+              In test suite runs on a warm laptop cache, MyPyC compilation cut the pure-Python runtime by ~60% (dropping <code class="font-mono text-xs">COUNT(id)</code> from 8.77s to 3.41s). Adding the value matrix halved multi-aggregate queries by fetching columns once per chunk, and batched integer reads brought single-segment scans down to ~1.45s and equality queries to ~0.15s.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between">
+          <a
+            href="https://github.com/lokeshdevnani/mastidb/blob/main/ARCHITECTURE.md#8-where-the-time-actually-goes"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-mono text-[var(--brand)] hover:underline flex items-center gap-1 font-semibold"
+          >
+            <span>View test conditions in ARCHITECTURE.md</span>
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Known Limitations & Rough Edges -->
+      <div class="p-7 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--encoded-coral-bg)] border border-[var(--encoded-coral-border)] text-xs font-mono font-bold text-[var(--encoded-coral)] mb-5">
+            <span>!</span>
+            <span>CURRENT LIMITATIONS</span>
+          </div>
+
+          <h3 class="text-xl font-bold text-[var(--ink)] mb-4">
+            Honest rough edges & next questions
+          </h3>
+
+          <ul class="space-y-3.5 text-sm text-[var(--muted)] mb-6">
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
+              <span><strong>Everything is a string:</strong> all columns use <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">DIMENSION</code> encoding today. Real numeric types are on the roadmap; <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">SUM</code> and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">AVG</code> parse strings per row.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
+              <span><strong>WHERE is equality-only:</strong> Bitmap index lookups only resolve exact equality (<code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">col = val</code>). Ranges, inequalities, and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">IN</code> lists are not yet supported.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
+              <span><strong>Sequential segment scan:</strong> Segments are currently queried in a sequential Python loop rather than fanning out to parallel threads or worker processes.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
+              <span><strong>Cross-segment COUNT(DISTINCT):</strong> Merging partial distinct states currently operates on raw segment dictionary IDs rather than decoded values (known correctness issue).</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
+              <span><strong>Batch-only ingest:</strong> Ingestion rewrites the target directory rather than appending new segments. Joins and subqueries are out of scope.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-[var(--line)] flex items-center justify-between">
+          <a
+            href="https://github.com/lokeshdevnani/mastidb/blob/main/ROADMAP.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-mono text-[var(--brand)] hover:underline flex items-center gap-1 font-semibold"
+          >
+            <span>Track upcoming work in ROADMAP.md</span>
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

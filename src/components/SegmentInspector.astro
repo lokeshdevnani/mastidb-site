@@ -1,0 +1,71 @@
+---
+import { ColumnExplorer } from './ColumnExplorer';
+---
+
+<section id="segment" class="section-spacing border-b border-[var(--line)] bg-[var(--surface-tint)]">
+  <div class="site-container">
+    
+    <!-- Introduction: 2-3 sentences per brief -->
+    <div class="max-w-3xl mb-12">
+      <div class="text-xs font-mono font-bold tracking-widest uppercase text-[var(--brand)] mb-3">
+        ON-DISK FILE FORMAT
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-4">
+        Look inside a segment file (.mastidb)
+      </h2>
+      <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
+        In MastiDB, every column is stored on disk in two dedicated files: a 40-byte binary metadata header and a memory-mapped payload file. The payload organizes dictionary offsets, raw UTF-8 strings, fixed-width row IDs, and serialized Roaring Bitmaps into one continuous address space.
+      </p>
+    </div>
+
+    <!-- Interactive Working Component Reused from old-site, adapted to design tokens -->
+    <div class="mb-14">
+      <ColumnExplorer client:visible />
+    </div>
+
+    <!-- Observations per brief -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Observation 1: Layout structure -->
+      <div class="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm">
+        <div class="text-xs font-mono font-bold text-[var(--dict-violet)] uppercase tracking-wider mb-2">
+          File Structure
+        </div>
+        <h4 class="text-base font-bold text-[var(--ink)] mb-2">
+          Where data lives
+        </h4>
+        <p class="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+          The 40-byte metadata file stores ten native 32-bit integers defining byte boundaries. The payload stacks dictionary offsets, sorted UTF-8 values, encoded row IDs, and bitmap indices back-to-back with zero gaps.
+        </p>
+      </div>
+
+      <!-- Observation 2: Arithmetic addressing -->
+      <div class="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm">
+        <div class="text-xs font-mono font-bold text-[var(--brand-blue)] uppercase tracking-wider mb-2">
+          Direct Addressing
+        </div>
+        <h4 class="text-base font-bold text-[var(--ink)] mb-2">
+          Arithmetic, not index search
+        </h4>
+        <p class="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+          Because the encoded list consists of fixed-width 4-byte integers, finding row <em>i</em> requires no pointer chasing or B-Tree traversal: the byte location is simply <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">offset_list + (i × 4)</code>.
+        </p>
+      </div>
+
+      <!-- Observation 3: Tradeoff -->
+      <div class="p-6 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm">
+        <div class="text-xs font-mono font-bold text-[var(--encoded-coral)] uppercase tracking-wider mb-2">
+          Deliberate Tradeoff
+        </div>
+        <h4 class="text-base font-bold text-[var(--ink)] mb-2">
+          Fixed width vs space density
+        </h4>
+        <p class="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+          Fixed 4-byte row IDs guarantee <span class="font-mono">O(1)</span> byte addressing, but cost 4 bytes per row even for low-cardinality columns. Bit-packing could compress storage by ~75%, but at the expense of this simple arithmetic.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
