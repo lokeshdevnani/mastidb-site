@@ -10,6 +10,8 @@ const {
   title = "MastiDB - A serious OLAP database engine. Written in Python.",
   description = "A single-node, on-disk, columnar OLAP engine written in Python with bitmap indexing, dictionary encoding, and late materialization.",
 } = Astro.props;
+
+const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 ---
 
 <!doctype html>
@@ -43,5 +45,14 @@ const {
   </head>
   <body class="bg-[var(--surface)] text-[var(--ink)] antialiased min-h-screen flex flex-col">
     <slot />
+
+    {/* Cloudflare Web Analytics (Cookieless Real User Monitoring) */}
+    {cfAnalyticsToken && (
+      <script
+        defer
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}
+      />
+    )}
   </body>
 </html>
