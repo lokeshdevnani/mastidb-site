@@ -12,49 +12,49 @@ const techniques: Technique[] = [
   {
     number: "01",
     title: "Columnar Segments & Fixed Addressing",
-    problem: "Row-oriented storage wastes massive I/O scanning irrelevant attributes on analytical queries.",
-    solution: "Separates every column into dedicated immutable files. Stores row IDs as fixed 4-byte integers so row i is resolved arithmetically (offset + i * 4) with zero index traversals.",
-    tradeoff: "Always charges 4 bytes per row even for low-cardinality columns. Poor fit for single-row OLTP transactions.",
+    problem: "Row storage reads every column off disk, even the ones the query never asks for.",
+    solution: "Each column lives in its own immutable file, and every row ID is a fixed 4-byte integer, so row i is found by arithmetic (offset + i * 4) rather than by walking an index.",
+    tradeoff: "Costs 4 bytes per row even for columns with only a handful of distinct values, and it is a poor fit for single-row OLTP work.",
     docAnchor: "2-storage-architecture"
   },
   {
     number: "02",
     title: "Sorted Dictionary Encoding",
-    problem: "String allocations and comparisons in Python crush CPU cache locality and inflate memory footprints.",
-    solution: "Deduplicates strings into an order-preserving, sorted dictionary. Queries find values via O(log N) binary search, and ORDER BY on string columns sorts integers without touching a string.",
-    tradeoff: "High-cardinality columns inflate dictionary overhead. Numeric columns are currently stored as strings, requiring per-row float parsing.",
+    problem: "Storing the same strings again on every row wastes space, and comparing them in Python is slow.",
+    solution: "Each distinct string is stored once in a sorted dictionary. Queries find a value by binary search in O(log N), and ORDER BY on a string column sorts integers instead of strings.",
+    tradeoff: "Columns with many distinct values make the dictionary large, and numbers are still stored as strings today, so SUM and AVG parse a float per row.",
     docAnchor: "24-the-payload-file-five-sections-back-to-back"
   },
   {
     number: "03",
     title: "Roaring Bitmap Indexing",
-    problem: "Evaluating WHERE predicates sequentially forces expensive full-table scans across millions of rows.",
-    solution: "Builds a compressed Roaring Bitmap for every distinct value during ingestion. Equality filters resolve in O(1) bitset lookups; AND and OR become fast bitwise intersections and unions.",
-    tradeoff: "Adds 13% to 40% space overhead at ingest time. Filtering is equality-only today; range scans and inequalities are not yet indexed.",
+    problem: "Checking a WHERE clause row by row means reading every row in the table.",
+    solution: "Ingestion builds a compressed Roaring Bitmap for every distinct value. An equality filter is then one bitmap lookup, and AND and OR are bitwise intersection and union.",
+    tradeoff: "The bitmaps add roughly 15-40% to segment size, and filtering is equality-only today - ranges and inequalities are not indexed yet.",
     docAnchor: "42-filtering-where-becomes-one-bitmap"
   },
   {
     number: "04",
     title: "Late Materialization",
-    problem: "De-referencing strings for intermediate rows burns memory bandwidth and triggers costly garbage collection.",
-    solution: "Maintains columns as integer IDs through filtering, grouping, and bounded min-heap sorting. Only rows surviving LIMIT or unique output groups are decoded back to strings.",
-    tradeoff: "Non-aggregate queries with large LIMITs require random seeks across dictionary files to materialize projected columns.",
+    problem: "Turning IDs back into strings for rows that never reach the output is work thrown away.",
+    solution: "Columns stay as integer IDs through filtering, grouping, and sorting. Only the rows that survive LIMIT, or the distinct output groups, are decoded back into strings.",
+    tradeoff: "A non-aggregate query with a large LIMIT ends up doing many random seeks into the dictionary files to materialize its columns.",
     docAnchor: "44-the-value-matrix-the-one-place-data-is-materialized"
   },
   {
     number: "05",
     title: "Mergeable Partial Aggregation",
-    problem: "Multi-segment or parallel execution requires clean composition without corrupting segment-local dictionaries.",
-    solution: "Each segment computes an AggregatePartial with associative, commutative merge() contracts (e.g. AVG preserves (sum, count) until finalization). Partials merge cleanly.",
-    tradeoff: "Group keys must be decoded to strings before crossing segment boundaries to merge correctly across segments with different dictionary mappings.",
+    problem: "Every segment has its own dictionary, so partial results from two segments cannot simply be concatenated.",
+    solution: "Each segment returns an AggregatePartial whose merge() is associative and commutative - AVG, for instance, carries (sum, count) until the very end - so partials from any number of segments combine safely.",
+    tradeoff: "Group keys have to be decoded to strings before they cross a segment boundary, since two segments map the same string to different IDs.",
     docAnchor: "5-aggregate-queries-in-detail"
   },
   {
     number: "06",
     title: "MyPyC Ahead-of-Time Compilation",
-    problem: "Standard Python bytecode execution and dynamic dispatch create massive overhead in tight numerical loops.",
-    solution: "Type-annotates critical inner loops and compiles them into native C extensions using MyPyC, cutting runtime by ~60% with zero algorithm changes.",
-    tradeoff: "Requires a C compiler during pip install (falls back to pure Python if unavailable). Enforces strict static type constraints.",
+    problem: "Interpreter overhead and dynamic dispatch dominate the cost of a tight inner loop in Python.",
+    solution: "The hot inner loops are type-annotated and compiled to native C extensions with MyPyC, which cut runtime by about 60% without changing a single algorithm.",
+    tradeoff: "Needs a C compiler at install time (it falls back to pure Python without one) and holds the compiled modules to strict static types.",
     docAnchor: "8-where-the-time-actually-goes"
   }
 ];
@@ -72,12 +72,12 @@ const techniques: Technique[] = [
         Core engine techniques & trade-offs
       </h2>
       <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
-        Every database design choice is an explicit trade between speed, space, and implementation complexity. Here is what MastiDB does, what it buys, and what it costs.
+        Every design choice here trades speed against space against complexity. For each one: the problem it solves, what MastiDB does about it, and what that costs.
       </p>
     </div>
 
     <!-- Scannable Cards Grid (3x2 on desktop) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {techniques.map((t) => (
         <div class="p-6 sm:p-7 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm hover:border-[var(--brand)]/30 hover:shadow-md transition-all flex flex-col justify-between">
           <div>
@@ -123,7 +123,7 @@ const techniques: Technique[] = [
           </div>
 
           <!-- What it costs or limits -->
-          <div class="mt-4 pt-3.5 border-t border-[var(--line)] bg-[var(--surface-tint)] -mx-6 -mb-6 p-4 rounded-b-2xl">
+          <div class="mt-4 border-t border-[var(--line)] bg-[var(--surface-tint)] -mx-6 -mb-6 sm:-mx-7 sm:-mb-7 px-6 sm:px-7 py-4 rounded-b-2xl">
             <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--encoded-coral)] mb-1">
               The Cost / Limitation
             </div>

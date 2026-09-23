@@ -44,6 +44,12 @@ const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
     <title>{title}</title>
   </head>
   <body class="bg-[var(--surface)] text-[var(--ink)] antialiased min-h-screen flex flex-col">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-3 focus:left-3 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--brand)] focus:text-white focus:text-sm focus:font-semibold"
+    >
+      Skip to main content
+    </a>
     <slot />
 
     {/* Cloudflare Web Analytics (Cookieless Real User Monitoring) */}

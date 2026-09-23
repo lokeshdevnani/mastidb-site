@@ -66,7 +66,7 @@ export function ColumnExplorer() {
         
         {/* Editor / Logical View (4 cols) */}
         <div className="lg:col-span-4">
-          <div className="sticky top-24 space-y-4">
+          <div className="sticky top-20 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-mono text-xs font-bold text-[var(--muted)] uppercase tracking-wider">
                 Logical Table Editor

@@ -1,19 +1,19 @@
 ---
 ---
 
-<section id="status" class="section-spacing border-b border-[var(--line)] bg-[var(--surface-tint)]">
+<section id="status" class="section-spacing bg-[var(--surface-tint)]">
   <div class="site-container">
     
     <!-- Header -->
     <div class="max-w-3xl mb-12">
       <div class="text-xs font-mono font-bold tracking-widest uppercase text-[var(--brand)] mb-3">
-        ENGINEERING STATUS
+        PROJECT STATUS
       </div>
       <h2 class="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-4">
         Where it stands: capabilities & limitations
       </h2>
       <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed prose-measure">
-        MastiDB is an experimental project designed for learning and exploration. It is neither intended for production use nor positioned to compete with mature columnar systems.
+        MastiDB is an experimental project built for learning. It is not meant for production, and it is not trying to compete with mature columnar systems.
       </p>
     </div>
 
@@ -39,20 +39,20 @@
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--result-green)] font-bold shrink-0">✓</span>
-              <span><strong>Two-pass execution:</strong> late materialization delays string decoding until top-K row IDs are identified via bounded min-heaps.</span>
+              <span><strong>Two-pass execution:</strong> string decoding waits until a bounded min-heap has settled which top-K row IDs actually survive.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--result-green)] font-bold shrink-0">✓</span>
-              <span><strong>Independent segments:</strong> horizontal segment splits execute queries independently and produce mergeable partial results.</span>
+              <span><strong>Independent segments:</strong> each segment answers a query on its own and returns a partial result that merges with the others.</span>
             </li>
           </ul>
 
           <div class="pt-5 border-t border-[var(--line)]">
             <div class="text-xs font-mono font-bold uppercase text-[var(--ink)] mb-2">
-              Measured Iteration Gains (1.3M NYPL rows)
+              Measured gains (1.3M NYPL rows)
             </div>
             <p class="text-xs text-[var(--muted)] leading-relaxed">
-              In test suite runs on a warm laptop cache, MyPyC compilation cut the pure-Python runtime by ~60% (dropping <code class="font-mono text-xs">COUNT(id)</code> from 8.77s to 3.41s). Adding the value matrix halved multi-aggregate queries by fetching columns once per chunk, and batched integer reads brought single-segment scans down to ~1.45s and equality queries to ~0.15s.
+              Measured on my laptop with a warm cache. MyPyC compilation cut runtime by about 60%, taking <code class="font-mono text-xs">COUNT(id)</code> from 8.77s to 3.41s. The value matrix then halved multi-aggregate queries by fetching each column once per chunk, and batched integer reads brought single-segment scans to ~1.45s and equality queries to ~0.15s.
             </p>
           </div>
         </div>
@@ -85,23 +85,23 @@
           <ul class="space-y-3.5 text-sm text-[var(--muted)] mb-6">
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
-              <span><strong>Everything is a string:</strong> all columns use <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">DIMENSION</code> encoding today. Real numeric types are on the roadmap; <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">SUM</code> and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">AVG</code> parse strings per row.</span>
+              <span><strong>Everything is a string:</strong> every column uses <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">DIMENSION</code> encoding today. Real numeric types are on the roadmap, so <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">SUM</code> and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">AVG</code> parse strings per row.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
-              <span><strong>WHERE is equality-only:</strong> Bitmap index lookups only resolve exact equality (<code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">col = val</code>). Ranges, inequalities, and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">IN</code> lists are not yet supported.</span>
+              <span><strong>WHERE is equality-only:</strong> Bitmap lookups resolve exact equality only (<code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded text-[var(--ink)]">col = val</code>). Ranges, inequalities, and <code class="font-mono text-xs bg-[var(--surface-tint)] px-1 py-0.5 rounded">IN</code> lists are not yet supported.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
-              <span><strong>Sequential segment scan:</strong> Segments are currently queried in a sequential Python loop rather than fanning out to parallel threads or worker processes.</span>
+              <span><strong>Sequential segment scan:</strong> Segments are queried in a sequential Python loop, not fanned out across threads or worker processes.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
-              <span><strong>Cross-segment COUNT(DISTINCT):</strong> Merging partial distinct states currently operates on raw segment dictionary IDs rather than decoded values (known correctness issue).</span>
+              <span><strong>Cross-segment COUNT(DISTINCT):</strong> Partial distinct states are merged on raw per-segment dictionary IDs instead of decoded values, which is a known correctness bug.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="text-[var(--encoded-coral)] font-bold shrink-0">✕</span>
-              <span><strong>Batch-only ingest:</strong> Ingestion rewrites the target directory rather than appending new segments. Joins and subqueries are out of scope.</span>
+              <span><strong>Batch-only ingest:</strong> Ingestion rewrites the whole target directory rather than appending a segment. Joins and subqueries are out of scope.</span>
             </li>
           </ul>
         </div>
@@ -118,6 +118,8 @@
           </a>
         </div>
       </div>
+
+    </div>
 
     <!-- Experimental Callout Card matching mock.png with construction hat mascot -->
     <div class="p-6 sm:p-7 rounded-2xl bg-[var(--surface)] border border-[var(--line)] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">

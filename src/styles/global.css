@@ -47,6 +47,11 @@
     outline: 2px solid var(--brand);
     outline-offset: 2px;
   }
+
+  /* Anchor targets must clear the 64px sticky navbar */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
 }
 
 /* Reduced Motion preferences */
@@ -59,51 +64,53 @@
   }
 }
 
-/* Common container constraints - wider content span matching mock */
-.site-container {
-  width: 100%;
-  max-width: 1320px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-@media (min-width: 768px) {
+@layer components {
+  /* Common container constraints - wider content span matching mock */
   .site-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
+    width: 100%;
+    max-width: 1320px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
-}
 
-@media (min-width: 1024px) {
-  .site-container {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+  @media (min-width: 768px) {
+    .site-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
-}
 
-/* Major section vertical rhythm */
-.section-spacing {
-  padding-top: 3.5rem;
-  padding-bottom: 3.5rem;
-}
+  @media (min-width: 1024px) {
+    .site-container {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
 
-@media (min-width: 768px) {
+  /* Major section vertical rhythm */
   .section-spacing {
-    padding-top: 5.5rem;
-    padding-bottom: 5.5rem;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
   }
-}
 
-@media (min-width: 1024px) {
-  .section-spacing {
-    padding-top: 6.5rem;
-    padding-bottom: 6.5rem;
+  @media (min-width: 768px) {
+    .section-spacing {
+      padding-top: 5.5rem;
+      padding-bottom: 5.5rem;
+    }
   }
-}
 
-/* Prose measure */
-.prose-measure {
-  max-width: 68ch;
+  @media (min-width: 1024px) {
+    .section-spacing {
+      padding-top: 6.5rem;
+      padding-bottom: 6.5rem;
+    }
+  }
+
+  /* Prose measure */
+  .prose-measure {
+    max-width: 68ch;
+  }
 }

@@ -23,15 +23,15 @@ const STAGES: Stage[] = [
     title: 'Binary Search Dictionary',
     badge: 'O(log N) Lookup',
     subtitle: 'Resolve "India" without reading rows',
-    explanation: 'Instead of scanning the dataset, MastiDB reads the sorted countryName dictionary. Because values are lexicographically sorted at ingest, binary search finds "India" at Dict ID 2 in ~7 comparisons.',
-    whyFast: 'Zero row scans. Whether the dataset has 24 thousand or 24 million rows, finding the filter ID takes less than 15 binary search probes.',
+    explanation: 'Instead of scanning the dataset, MastiDB reads the sorted countryName dictionary. Because values are sorted at ingest, binary search lands on "India" at Dict ID 47 after 6 probes.',
+    whyFast: 'Zero row scans. Whether the table holds 24 thousand rows or 24 million, resolving the filter value takes fewer than 15 probes.',
   },
   {
     id: 3,
     title: 'Roaring Bitmap Evaluation',
     badge: 'O(1) Bitset Index',
     subtitle: 'Fetch matching row indices directly',
-    explanation: 'MastiDB seeks directly to Dict ID 2 in the bitmap offsets array. Reading the serialized Roaring Bitmap yields 79 matching row IDs [0, 2, 79, 142, 510, ...] instantly.',
+    explanation: 'MastiDB seeks straight to Dict ID 47 in the bitmap offsets array. Reading the serialized Roaring Bitmap yields all 79 matching row IDs [0, 2, 79, 142, 305, ...] at once.',
     whyFast: '24,354 non-matching rows are discarded in 0.2ms without reading a single byte of their payload data.',
   },
   {
@@ -47,7 +47,7 @@ const STAGES: Stage[] = [
     title: 'Aggregate on Integer IDs',
     badge: 'Zero String Hashing',
     subtitle: 'AggregateBuffer hashes integer tuples',
-    explanation: 'AggregateBuffer maintains a hash map where keys are integer tuples (dict_id,). For each matched row, it increments the count slot. Tuple (3,) reaches 7, (7,) reaches 6, and (9,) reaches 5.',
+    explanation: 'AggregateBuffer keeps a hash map whose keys are integer tuples (dict_id,). Each matched row increments one count slot. Across the 79 rows, tuple (7,) reaches 34, (3,) reaches 27, and (9,) reaches 18.',
     whyFast: 'Hashing small integer tuples in Python is ~10x faster than allocating and hashing strings. The inner aggregation loop never touches strings.',
   },
   {
@@ -55,8 +55,8 @@ const STAGES: Stage[] = [
     title: 'Late Materialization & Finalize',
     badge: 'Final ResultSet',
     subtitle: 'Decode only the surviving group keys',
-    explanation: 'Only after all rows are aggregated are the 3 distinct winning IDs (3, 7, 9) decoded against the dictionary into "Delhi", "Bengaluru", and "Mumbai" to format the final ResultSet.',
-    whyFast: 'For 24,433 rows in the table, exactly 3 strings were decoded from disk. Late materialization avoids gigabytes of string garbage collection.',
+    explanation: 'Only once all 79 rows are aggregated are the 3 surviving group IDs (3, 7, 9) decoded against the dictionary into "Bengaluru", "Delhi", and "Mumbai" for the final ResultSet.',
+    whyFast: 'Out of 24,433 rows in the table, exactly 3 strings were decoded from disk. Everything before this step ran on integers.',
   },
 ];
 
@@ -116,7 +116,7 @@ export function QueryWalkthrough() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div>
             <div className="text-xs font-mono font-bold tracking-widest uppercase text-[var(--brand)] mb-3">
-              INTERACTIVE QUERY SIMULATION
+              QUERY EXECUTION
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--ink)] tracking-tight mb-3">
               Follow a query through the engine
@@ -436,52 +436,64 @@ function StageVisualDict() {
           Binary Search in countryName Dictionary
         </span>
         <span className="text-xs font-mono font-bold text-[var(--dict-violet)]">
-          Card: 107 unique values
+          107 distinct values
         </span>
       </div>
 
       <div className="border border-[var(--line)] rounded-xl overflow-hidden font-mono text-xs">
         <div className="grid grid-cols-12 bg-[var(--surface-tint)] px-4 py-2 border-b border-[var(--line)] font-bold text-[var(--muted)]">
+          <div className="col-span-2">Probe</div>
           <div className="col-span-3">Dict ID</div>
-          <div className="col-span-6">String Value</div>
-          <div className="col-span-3 text-right">Binary Search</div>
+          <div className="col-span-4">String Value</div>
+          <div className="col-span-3 text-right">Search Window</div>
         </div>
 
         <div className="divide-y divide-[var(--line)]">
           <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
-            <div className="col-span-3">0</div>
-            <div className="col-span-6">Argentina</div>
-            <div className="col-span-3 text-right text-[10px]">probe 1 (low)</div>
+            <div className="col-span-2">1</div>
+            <div className="col-span-3">53</div>
+            <div className="col-span-4">Mexico</div>
+            <div className="col-span-3 text-right text-[10px]">too high &rarr; hi = 52</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
-            <div className="col-span-3">1</div>
-            <div className="col-span-6">Germany</div>
-            <div className="col-span-3 text-right text-[10px]">probe 2</div>
+            <div className="col-span-2">2</div>
+            <div className="col-span-3">26</div>
+            <div className="col-span-4">Denmark</div>
+            <div className="col-span-3 text-right text-[10px]">too low &rarr; lo = 27</div>
+          </div>
+          <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
+            <div className="col-span-2">3</div>
+            <div className="col-span-3">39</div>
+            <div className="col-span-4">Greece</div>
+            <div className="col-span-3 text-right text-[10px]">too low &rarr; lo = 40</div>
+          </div>
+          <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
+            <div className="col-span-2">4</div>
+            <div className="col-span-3">46</div>
+            <div className="col-span-4">Iceland</div>
+            <div className="col-span-3 text-right text-[10px]">too low &rarr; lo = 47</div>
+          </div>
+          <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
+            <div className="col-span-2">5</div>
+            <div className="col-span-3">49</div>
+            <div className="col-span-4">Iran</div>
+            <div className="col-span-3 text-right text-[10px]">too high &rarr; hi = 48</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2.5 bg-[var(--dict-violet-bg)] font-bold text-[var(--dict-violet)] border-l-4 border-l-[var(--dict-violet)]">
-            <div className="col-span-3">2</div>
-            <div className="col-span-6 flex items-center gap-2">
+            <div className="col-span-2">6</div>
+            <div className="col-span-3">47</div>
+            <div className="col-span-4 flex items-center gap-2">
               <span>India</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] bg-[var(--dict-violet)] text-white">MATCH</span>
             </div>
-            <div className="col-span-3 text-right text-xs">dict_id = 2</div>
-          </div>
-          <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
-            <div className="col-span-3">3</div>
-            <div className="col-span-6">Japan</div>
-            <div className="col-span-3 text-right text-[10px]">probe 3 (high)</div>
-          </div>
-          <div className="grid grid-cols-12 px-4 py-2 text-slate-300 bg-[var(--surface)]">
-            <div className="col-span-3">...</div>
-            <div className="col-span-6">103 other countries</div>
-            <div className="col-span-3 text-right text-[10px]">skipped</div>
+            <div className="col-span-3 text-right text-xs">dict_id = 47</div>
           </div>
         </div>
       </div>
 
       <div className="p-3 rounded-xl bg-[var(--lavender)] border border-[var(--brand)]/20 text-xs text-[var(--brand)] font-mono font-semibold flex items-center justify-between">
-        <span>Target Dict ID Found: 2</span>
-        <span>Comparisons: 7</span>
+        <span>Target Dict ID Found: 47</span>
+        <span>Probes: 6 of 107 values</span>
       </div>
     </div>
   );
@@ -492,7 +504,7 @@ function StageVisualBitmap() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <span className="text-xs font-mono text-[var(--muted)] uppercase tracking-wider">
-          Roaring Bitmap Lookup for Dict ID 2
+          Roaring Bitmap Lookup for Dict ID 47
         </span>
         <span className="text-xs font-mono font-bold text-[var(--bitmap-amber)]">
           79 matching rows
@@ -566,17 +578,17 @@ function StageVisualBatchedFetch() {
         <div className="divide-y divide-[var(--line)]">
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 0</div>
-            <div className="col-span-4 font-bold text-[var(--brand)]">ID 3</div>
-            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
-          </div>
-          <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
-            <div className="col-span-3 font-semibold">Row 2</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 7</div>
             <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
-            <div className="col-span-3 font-semibold">Row 79</div>
+            <div className="col-span-3 font-semibold">Row 2</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 3</div>
+            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
+          </div>
+          <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
+            <div className="col-span-3 font-semibold">Row 79</div>
+            <div className="col-span-4 font-bold text-[var(--brand)]">ID 7</div>
             <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
@@ -586,7 +598,7 @@ function StageVisualBatchedFetch() {
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 305</div>
-            <div className="col-span-4 font-bold text-[var(--brand)]">ID 7</div>
+            <div className="col-span-4 font-bold text-[var(--brand)]">ID 3</div>
             <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
           </div>
         </div>
@@ -620,18 +632,18 @@ function StageVisualAggregate() {
 
         <div className="divide-y divide-[var(--line)]">
           <div className="grid grid-cols-12 px-4 py-2.5 bg-[var(--surface)] items-center">
-            <div className="col-span-4 font-bold text-[var(--brand)]">(3,)</div>
-            <div className="col-span-4 font-extrabold text-[var(--ink)] text-sm">7</div>
+            <div className="col-span-4 font-bold text-[var(--brand)]">(7,)</div>
+            <div className="col-span-4 font-extrabold text-[var(--ink)] text-sm">34</div>
             <div className="col-span-4 text-right text-[11px] text-[var(--muted)]">state + 1</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2.5 bg-[var(--surface)] items-center">
-            <div className="col-span-4 font-bold text-[var(--brand)]">(7,)</div>
-            <div className="col-span-4 font-extrabold text-[var(--ink)] text-sm">6</div>
+            <div className="col-span-4 font-bold text-[var(--brand)]">(3,)</div>
+            <div className="col-span-4 font-extrabold text-[var(--ink)] text-sm">27</div>
             <div className="col-span-4 text-right text-[11px] text-[var(--muted)]">state + 1</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2.5 bg-[var(--surface)] items-center">
             <div className="col-span-4 font-bold text-[var(--brand)]">(9,)</div>
-            <div className="col-span-4 font-extrabold text-[var(--ink)] text-sm">5</div>
+            <div className="col-span-4 font-extrabold text-[var(--ink)] text-sm">18</div>
             <div className="col-span-4 text-right text-[11px] text-[var(--muted)]">state + 1</div>
           </div>
         </div>
@@ -666,18 +678,18 @@ function StageVisualFinalResult() {
         <div className="divide-y divide-[var(--line)]">
           <div className="grid grid-cols-12 px-4 py-3 bg-[var(--surface)] items-center">
             <div className="col-span-6 font-bold text-[var(--ink)] text-sm">Delhi</div>
-            <div className="col-span-3 text-[var(--muted)]">ID: 3</div>
-            <div className="col-span-3 text-right font-bold text-[var(--brand)] text-sm">7</div>
+            <div className="col-span-3 text-[var(--muted)]">ID: 7</div>
+            <div className="col-span-3 text-right font-bold text-[var(--brand)] text-sm">34</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-3 bg-[var(--surface)] items-center">
             <div className="col-span-6 font-bold text-[var(--ink)] text-sm">Bengaluru</div>
-            <div className="col-span-3 text-[var(--muted)]">ID: 7</div>
-            <div className="col-span-3 text-right font-bold text-[var(--brand)] text-sm">6</div>
+            <div className="col-span-3 text-[var(--muted)]">ID: 3</div>
+            <div className="col-span-3 text-right font-bold text-[var(--brand)] text-sm">27</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-3 bg-[var(--surface)] items-center">
             <div className="col-span-6 font-bold text-[var(--ink)] text-sm">Mumbai</div>
             <div className="col-span-3 text-[var(--muted)]">ID: 9</div>
-            <div className="col-span-3 text-right font-bold text-[var(--brand)] text-sm">5</div>
+            <div className="col-span-3 text-right font-bold text-[var(--brand)] text-sm">18</div>
           </div>
         </div>
       </div>
