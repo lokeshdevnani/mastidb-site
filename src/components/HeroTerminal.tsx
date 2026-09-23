@@ -44,7 +44,7 @@ print(results.get_results())
 # [['Delhi', 34], ['Bengaluru', 27], ['Mumbai', 18]]`;
 
   return (
-    <div className="w-full rounded-2xl border border-[var(--terminal-border)] bg-[var(--terminal)] text-slate-200 shadow-2xl overflow-hidden font-mono text-xs md:text-sm flex flex-col">
+    <div className="w-full rounded-2xl border border-[var(--terminal-border)] bg-[var(--terminal)] text-slate-200 shadow-2xl overflow-hidden font-mono text-[11px] md:text-xs flex flex-col">
       {/* Terminal Titlebar */}
       <div className="flex items-center justify-between px-4 py-3 bg-[var(--terminal-subtle)] border-b border-[var(--terminal-border)] select-none">
         {/* Tab Switcher */}
@@ -140,7 +140,7 @@ print(results.get_results())
             </div>
 
             {/* Plausible output block */}
-            <div className="mt-3 p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs">
+            <div className="mt-3 p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-[11px]">
               <div className="text-slate-400 pb-1.5 border-b border-slate-800 flex justify-between">
                 <span>ResultSet · 3 rows · 12ms</span>
                 <span className="text-emerald-400 font-semibold">79 matched</span>
@@ -155,7 +155,7 @@ print(results.get_results())
             </div>
           </div>
         ) : (
-          <div className="space-y-1.5 whitespace-pre font-mono text-xs md:text-sm">
+          <div className="space-y-1.5 whitespace-pre font-mono text-[11px] md:text-xs">
             <span className="text-slate-500"># Embedded analytical query execution in Python</span>
             <div><span className="text-indigo-400 font-semibold">from</span> mastidb <span className="text-indigo-400 font-semibold">import</span> Table, QueryExecutor</div>
             <div className="text-slate-600 py-1"># Memory-mapped columnar segment read</div>
