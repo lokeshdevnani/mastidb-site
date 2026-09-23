@@ -453,31 +453,31 @@ function StageVisualDict() {
             <div className="col-span-2">1</div>
             <div className="col-span-3">53</div>
             <div className="col-span-4">Mexico</div>
-            <div className="col-span-3 text-right text-[10px]">too high &rarr; hi = 52</div>
+            <div className="col-span-3 text-right text-[10px]">too high → hi = 52</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
             <div className="col-span-2">2</div>
             <div className="col-span-3">26</div>
             <div className="col-span-4">Denmark</div>
-            <div className="col-span-3 text-right text-[10px]">too low &rarr; lo = 27</div>
+            <div className="col-span-3 text-right text-[10px]">too low → lo = 27</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
             <div className="col-span-2">3</div>
             <div className="col-span-3">39</div>
             <div className="col-span-4">Greece</div>
-            <div className="col-span-3 text-right text-[10px]">too low &rarr; lo = 40</div>
+            <div className="col-span-3 text-right text-[10px]">too low → lo = 40</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
             <div className="col-span-2">4</div>
             <div className="col-span-3">46</div>
             <div className="col-span-4">Iceland</div>
-            <div className="col-span-3 text-right text-[10px]">too low &rarr; lo = 47</div>
+            <div className="col-span-3 text-right text-[10px]">too low → lo = 47</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 text-slate-400 bg-[var(--surface)]">
             <div className="col-span-2">5</div>
             <div className="col-span-3">49</div>
             <div className="col-span-4">Iran</div>
-            <div className="col-span-3 text-right text-[10px]">too high &rarr; hi = 48</div>
+            <div className="col-span-3 text-right text-[10px]">too high → hi = 48</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2.5 bg-[var(--dict-violet-bg)] font-bold text-[var(--dict-violet)] border-l-4 border-l-[var(--dict-violet)]">
             <div className="col-span-2">6</div>

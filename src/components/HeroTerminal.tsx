@@ -14,27 +14,30 @@ export function HeroTerminal() {
     }
   };
 
-  const cliCode = `# 1. Install via pip (builds native C extensions via MyPyC)
+  const cliCode = `# 1. Install via pip (compiles hot modules with MyPyC)
 pip install mastidb
 
-# 2. Ingest the included Wikipedia edits demo (~24k rows)
+# 2. Ingest Wikipedia sample (~24k edits)
 mastidb demo wikipedia
 
-# 3. Run a columnar query (filters via Roaring Bitmaps)
-mastidb query -d /tmp/wikipedia "SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName"`;
+# 3. Fast columnar query execution
+mastidb query -d /tmp/wikipedia \\
+    "SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName"`;
 
-  const pythonCode = `from mastidb import Table, QueryExecutor
+  const pythonCode = `# Embedded analytical query execution in Python
+from mastidb import Table, QueryExecutor
 
-# Load memory-mapped columnar segment
+# Memory-mapped columnar segment read
 table = Table.from_data_dir('/tmp/wikipedia')
+executor = QueryExecutor(table)
 
-# Execute query: two-pass evaluation with late materialization
-results = QueryExecutor(table).execute(
+results = executor.execute(
     "SELECT cityName, COUNT(id) WHERE countryName = 'India' GROUP BY cityName LIMIT 5"
 )
 
+# Output arrives as decoded matrix
 print(results.get_results())
-# Output: [['Delhi', 7], ['Bengaluru', 6], ['Mumbai', 5], ...]`;
+# [['Delhi', 34], ['Bengaluru', 27], ['Mumbai', 18]]`;
 
   return (
     <div className="w-full rounded-2xl border border-[var(--terminal-border)] bg-[var(--terminal)] text-slate-200 shadow-2xl overflow-hidden font-mono text-xs md:text-sm flex flex-col">
@@ -137,9 +140,9 @@ print(results.get_results())
               <div className="pt-2 text-slate-200">
                 <div>cityName    │ COUNT(id)</div>
                 <div className="text-slate-600">────────────┼──────────</div>
-                <div>Delhi       │ 7</div>
-                <div>Bengaluru   │ 6</div>
-                <div>Mumbai      │ 5</div>
+                <div>Delhi       │ 34</div>
+                <div>Bengaluru   │ 27</div>
+                <div>Mumbai      │ 18</div>
               </div>
             </div>
           </div>
@@ -157,7 +160,7 @@ print(results.get_results())
             </div>
             <div className="text-slate-600 py-1"># Output arrives as decoded matrix</div>
             <div>print(results.get_results())</div>
-            <div className="text-indigo-300"># [['Delhi', 7], ['Bengaluru', 6], ['Mumbai', 5], ...]</div>
+            <div className="text-indigo-300"># [['Delhi', 34], ['Bengaluru', 27], ['Mumbai', 18]]</div>
           </div>
         )}
       </div>
