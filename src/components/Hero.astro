@@ -13,23 +13,23 @@ import { HeroTerminal } from './HeroTerminal';
       <span class="tracking-wide">OPEN SOURCE ANALYTICS • EXPERIMENTAL OLAP ENGINE</span>
     </div>
 
-    <!-- Hero Composition Grid (Desktop: Left Copy, Center Mascot, Right Terminal) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
+    <!-- Hero Composition Grid (Desktop: Left Copy lg:col-span-7, Right Terminal lg:col-span-5 with overlapping Mascot) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
       
-      <!-- Left Column: Headline, Narrative, CTAs & Feature Pills (lg:col-span-5) -->
-      <div class="lg:col-span-5 flex flex-col justify-center">
-        <h1 class="hero-headline font-extrabold tracking-tight text-[var(--ink)] leading-[1.05] mb-5">
+      <!-- Left Column: Headline, Narrative, CTAs & Feature Pills (lg:col-span-7) -->
+      <div class="lg:col-span-7 flex flex-col justify-center">
+        <h1 class="font-extrabold tracking-tight text-[var(--ink)] text-4xl sm:text-5xl lg:text-[3.5rem] leading-[1.08] mb-5">
           A serious OLAP <br class="hidden sm:inline" />
           database engine. <br />
           <span class="text-[var(--brand)]">Written in Python.</span>
         </h1>
 
-        <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed mb-6 prose-measure">
-          Explore how a columnar database engine stores data on disk, cuts row scans with Roaring Bitmaps, and answers analytical queries with mechanical sympathy.
+        <p class="text-base sm:text-lg text-[var(--muted)] leading-relaxed mb-7 max-w-xl">
+          MastiDB is a small, fast, columnar database engine written in Python. It helps you understand how modern analytical databases work — by actually implementing the ideas.
         </p>
 
-        <!-- Primary & Secondary CTAs -->
-        <div class="flex flex-wrap items-center gap-3.5 mb-7">
+        <!-- Primary & Secondary CTAs matching mock -->
+        <div class="flex flex-wrap items-center gap-3.5 mb-8">
           <!-- Copy pip install button -->
           <button
             id="hero-copy-pip"
@@ -52,7 +52,7 @@ import { HeroTerminal } from './HeroTerminal';
             href="https://github.com/lokeshdevnani/mastidb"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--surface-tint)] text-[var(--ink)] text-xs font-semibold transition-all hover:border-[var(--brand)]/30 focus-visible:ring-2 focus-visible:ring-[var(--brand)] shadow-sm"
+            class="inline-flex items-center gap-2 px-4.5 py-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] hover:bg-[var(--surface-tint)] text-[var(--ink)] text-xs font-semibold transition-all hover:border-[var(--brand)]/30 focus-visible:ring-2 focus-visible:ring-[var(--brand)] shadow-xs"
           >
             <svg class="w-4 h-4 fill-current text-[var(--ink)]" viewBox="0 0 24 24">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
@@ -62,7 +62,7 @@ import { HeroTerminal } from './HeroTerminal';
         </div>
 
         <!-- 4 Feature Pills from mock.png -->
-        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--line)]">
+        <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-[var(--line)]/80">
           <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--surface-tint)] border border-[var(--line)] text-[11px] font-medium text-[var(--muted)]">
             <svg class="w-3.5 h-3.5 text-[var(--brand)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z" />
@@ -95,57 +95,102 @@ import { HeroTerminal } from './HeroTerminal';
 
       </div>
 
-      <!-- Center Column: Animated Mascot (lg:col-span-3) -->
-      <div class="lg:col-span-3 flex flex-col items-center justify-center relative py-2">
-        <div class="mascot-wrapper flex flex-col items-center justify-center relative">
-          <!-- Speech Bubble from mock.png -->
-          <div class="mascot-bubble absolute -top-4 bg-white border border-[var(--line)] px-3 py-1 rounded-full text-xs font-bold text-[var(--brand)] shadow-sm pointer-events-none z-10 flex items-center gap-1 whitespace-nowrap">
+      <!-- Mobile/Tablet Mascot view (visible only on < lg) -->
+      <div class="lg:hidden flex flex-col items-center justify-center my-2">
+        <div class="relative flex flex-col items-center">
+          <div class="bg-white border border-[var(--line)] px-3 py-1 rounded-full text-xs font-bold text-[var(--brand)] shadow-sm mb-2 flex items-center gap-1">
             <span>Same data. More Masti!</span>
             <span class="text-amber-500">✨</span>
           </div>
-
-          <!-- Preserves entire mascot body including legs at all viewport sizes without clipping -->
           <img
             src="/mastidb-mascot.webp"
-            alt="MastiDB Mascot thinking, winking and pointing to the terminal"
-            width="360"
-            height="340"
-            class="mascot-image max-w-[190px] sm:max-w-[220px] md:max-w-[240px] lg:max-w-[260px] h-auto object-contain select-none mt-2"
+            alt="MastiDB Mascot"
+            width="260"
+            height="240"
+            class="w-48 sm:w-56 h-auto object-contain select-none"
             loading="eager"
-            decoding="async"
           />
         </div>
       </div>
 
-      <!-- Right Column: Interactive Terminal + 4-Step Pipeline Box (lg:col-span-4) -->
-      <div class="lg:col-span-4 flex flex-col gap-4 w-full">
+      <!-- Right Column: Interactive Terminal + Overlapping Desktop Mascot + Pipeline Card (lg:col-span-5) -->
+      <div class="lg:col-span-5 relative w-full flex flex-col gap-4">
+        
+        <!-- Desktop Mascot: Overlaps with left of terminal window per mock.png -->
+        <div class="hidden lg:block absolute -left-28 xl:-left-36 bottom-24 z-30 pointer-events-none select-none">
+          <div class="relative flex flex-col items-center">
+            <!-- Speech / callout text pointing down to mascot -->
+            <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-white/95 backdrop-blur-xs border border-[var(--line)] px-3 py-0.5 rounded-full text-[11px] font-bold text-[var(--brand)] shadow-sm whitespace-nowrap flex items-center gap-1">
+              <span>Same data. More Masti!</span>
+              <span class="text-amber-500">✨</span>
+            </div>
+            <img
+              src="/mastidb-mascot.webp"
+              alt="MastiDB Mascot pointing to terminal"
+              width="360"
+              height="340"
+              class="w-[230px] xl:w-[260px] h-auto object-contain drop-shadow-md"
+              loading="eager"
+            />
+          </div>
+        </div>
+
         <!-- Interactive Terminal -->
-        <HeroTerminal client:load />
+        <div class="relative z-10">
+          <HeroTerminal client:load />
+        </div>
 
         <!-- 4-Step Pipeline directly beneath Terminal per mock.png -->
-        <div class="p-3.5 rounded-xl border border-[var(--line)] bg-[var(--surface-tint)] shadow-sm">
-          <div class="grid grid-cols-4 gap-1.5 text-center text-xs mb-2">
-            <div class="p-1.5 rounded-lg bg-[var(--surface)] border border-[var(--line)] flex flex-col items-center shadow-xs">
-              <span class="text-[11px] font-bold text-[var(--brand)]">SQL</span>
-              <span class="text-[9px] text-[var(--muted)] leading-tight">Query</span>
+        <div class="p-3.5 sm:p-4 rounded-2xl border border-[var(--line)] bg-[var(--surface-tint)] shadow-xs relative z-10">
+          <div class="flex items-center justify-between gap-1 sm:gap-2 text-center text-xs mb-2">
+            <!-- Step 1: SQL query -->
+            <div class="flex-1 p-2 rounded-xl bg-white border border-[var(--line)] flex flex-col items-center shadow-2xs">
+              <svg class="w-4 h-4 text-[var(--brand-blue)] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span class="text-[11px] font-bold text-[var(--ink)] leading-none">SQL</span>
+              <span class="text-[9px] text-[var(--muted)] leading-tight mt-0.5">query</span>
             </div>
-            <div class="p-1.5 rounded-lg bg-[var(--dict-violet-bg)] border border-[var(--dict-violet-border)] flex flex-col items-center shadow-xs">
-              <span class="text-[11px] font-bold text-[var(--dict-violet)]">Dict</span>
-              <span class="text-[9px] text-[var(--dict-violet)]/80 leading-tight">Lookup</span>
+
+            <span class="text-[var(--brand-blue)]/50 font-bold select-none text-xs">→</span>
+
+            <!-- Step 2: Dictionary lookup -->
+            <div class="flex-1 p-2 rounded-xl bg-white border border-[var(--line)] flex flex-col items-center shadow-2xs">
+              <svg class="w-4 h-4 text-[var(--dict-violet)] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span class="text-[11px] font-bold text-[var(--dict-violet)] leading-none">Dictionary</span>
+              <span class="text-[9px] text-[var(--muted)] leading-tight mt-0.5">lookup</span>
             </div>
-            <div class="p-1.5 rounded-lg bg-[var(--bitmap-amber-bg)] border border-[var(--bitmap-amber-border)] flex flex-col items-center shadow-xs">
-              <span class="text-[11px] font-bold text-[var(--bitmap-amber)]">Bitmap</span>
-              <span class="text-[9px] text-[var(--bitmap-amber)]/80 leading-tight">Index</span>
+
+            <span class="text-[var(--brand-blue)]/50 font-bold select-none text-xs">→</span>
+
+            <!-- Step 3: Bitmap index -->
+            <div class="flex-1 p-2 rounded-xl bg-white border border-[var(--line)] flex flex-col items-center shadow-2xs">
+              <svg class="w-4 h-4 text-[var(--brand-blue)] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z" />
+              </svg>
+              <span class="text-[11px] font-bold text-[var(--brand-blue)] leading-none">Bitmap</span>
+              <span class="text-[9px] text-[var(--muted)] leading-tight mt-0.5">index</span>
             </div>
-            <div class="p-1.5 rounded-lg bg-[var(--result-green-bg)] border border-[var(--result-green-border)] flex flex-col items-center shadow-xs">
-              <span class="text-[11px] font-bold text-[var(--result-green)]">Aggregate</span>
-              <span class="text-[9px] text-[var(--result-green)]/80 leading-tight">Result</span>
+
+            <span class="text-[var(--brand-blue)]/50 font-bold select-none text-xs">→</span>
+
+            <!-- Step 4: Aggregate result -->
+            <div class="flex-1 p-2 rounded-xl bg-white border border-[var(--line)] flex flex-col items-center shadow-2xs">
+              <svg class="w-4 h-4 text-[var(--result-green)] mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span class="text-[11px] font-bold text-[var(--result-green)] leading-none">Aggregate</span>
+              <span class="text-[9px] text-[var(--muted)] leading-tight mt-0.5">result</span>
             </div>
           </div>
-          <div class="text-[10px] text-center text-[var(--muted)] font-mono">
+
+          <div class="text-[11px] text-center text-[var(--muted)]">
             From a simple SQL query to fast analytical results.
           </div>
         </div>
+
       </div>
 
     </div>

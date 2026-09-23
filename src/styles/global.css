@@ -30,8 +30,8 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     color: var(--ink);
-    font-weight: 700;
-    letter-spacing: -0.025em;
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
 
   code, pre, kbd, samp {
@@ -59,10 +59,10 @@
   }
 }
 
-/* Common container constraints */
+/* Common container constraints - wider content span matching mock */
 .site-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1320px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.5rem;
