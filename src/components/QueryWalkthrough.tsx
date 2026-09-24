@@ -24,7 +24,7 @@ const STAGES: Stage[] = [
     badge: 'O(log N) Lookup',
     subtitle: 'Resolve "India" without reading rows',
     explanation: 'Instead of scanning the dataset, MastiDB reads the sorted countryName dictionary. Because values are sorted at ingest, binary search lands on "India" at Dict ID 47 after 6 probes.',
-    whyFast: 'Zero row scans. Whether the table holds 24 thousand rows or 24 million, resolving the filter value takes fewer than 15 probes.',
+    whyFast: 'No rows are scanned. Whether the table holds 24 thousand rows or 24 million, resolving the filter value takes fewer than 15 probes.',
   },
   {
     id: 3,
@@ -39,7 +39,7 @@ const STAGES: Stage[] = [
     title: 'Batched Fetch (Value Matrix)',
     badge: 'Integer Addressing',
     subtitle: 'Fetch cityName column as raw Dict IDs',
-    explanation: 'For the 79 matching rows, the engine performs a batched contiguous read from cityName.mastidb. Crucially, it fetches the values as 4-byte integer Dict IDs, keeping them encoded.',
+    explanation: 'For the 79 matching rows, the engine performs a batched contiguous read from cityName.mastidb. It fetches the values as 4-byte integer Dict IDs and leaves them encoded.',
     whyFast: 'Fetching integers is sequential and arithmetic (offset + row * 4). String decoding is random and expensive, so decoding is strictly delayed.',
   },
   {
@@ -48,7 +48,7 @@ const STAGES: Stage[] = [
     badge: 'Zero String Hashing',
     subtitle: 'AggregateBuffer hashes integer tuples',
     explanation: 'AggregateBuffer keeps a hash map whose keys are integer tuples (dict_id,). Each matched row increments one count slot. Across the 79 rows, tuple (7,) reaches 34, (3,) reaches 27, and (9,) reaches 18.',
-    whyFast: 'Hashing small integer tuples in Python is ~10x faster than allocating and hashing strings. The inner aggregation loop never touches strings.',
+    whyFast: 'The inner aggregation loop never touches strings, and hashing small integer tuples in Python is about 10x faster than allocating and hashing them.',
   },
   {
     id: 6,
@@ -56,7 +56,7 @@ const STAGES: Stage[] = [
     badge: 'Final ResultSet',
     subtitle: 'Decode only the surviving group keys',
     explanation: 'Only once all 79 rows are aggregated are the 3 surviving group IDs (3, 7, 9) decoded against the dictionary into "Bengaluru", "Delhi", and "Mumbai" for the final ResultSet.',
-    whyFast: 'Out of 24,433 rows in the table, exactly 3 strings were decoded from disk. Everything before this step ran on integers.',
+    whyFast: 'Out of 24,433 rows in the table, exactly 3 strings were decoded from disk. Every step before this one ran on integers.',
   },
 ];
 
@@ -122,7 +122,7 @@ export function QueryWalkthrough() {
               Follow a query through the engine
             </h2>
             <p className="text-base sm:text-lg text-[var(--muted)] prose-measure">
-              Step through what MastiDB actually does with one analytical query, from SQL text to result. Bitmaps and integer dictionaries let it skip both the row scan and the string building.
+              Step through what MastiDB does with one analytical query, from SQL text to result. Bitmaps and integer dictionaries let it skip both the row scan and the string building.
             </p>
           </div>
 
@@ -249,7 +249,6 @@ export function QueryWalkthrough() {
               {stage.explanation}
             </p>
             <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--line)] text-xs text-[var(--muted)] flex items-start gap-2">
-              <span className="text-[var(--brand)] font-bold text-sm">💡</span>
               <div>
                 <strong className="text-[var(--ink)]">Why this is fast:</strong> {stage.whyFast}
               </div>
@@ -345,7 +344,6 @@ export function QueryWalkthrough() {
                 {stage.explanation}
               </p>
               <div className="p-3 rounded-xl bg-[var(--surface)] border border-[var(--line)] text-xs text-[var(--muted)] flex items-start gap-2">
-                <span className="text-[var(--brand)] font-bold text-sm">💡</span>
                 <div>
                   <strong className="text-[var(--ink)]">Why this is fast:</strong> {stage.whyFast}
                 </div>
@@ -605,7 +603,7 @@ function StageVisualBatchedFetch() {
       </div>
 
       <div className="p-3.5 rounded-xl bg-[var(--lavender)] border border-[var(--brand)]/20 text-xs font-mono text-[var(--brand)]">
-        <strong>Direct Memory-Map:</strong> Values are fetched using offset_list + (row_id * 4). No index search or object allocations.
+        Values are fetched using offset_list + (row_id * 4), a direct memory-map read with no index search and no object allocations.
       </div>
     </div>
   );
@@ -650,7 +648,7 @@ function StageVisualAggregate() {
       </div>
 
       <div className="p-3.5 rounded-xl bg-[var(--result-green-bg)] border border-[var(--result-green-border)] text-xs font-mono text-emerald-800">
-        <strong>Single Row Traversal:</strong> Aggregates maintain their partial states in buffer slots. String decoding has still NOT occurred.
+        The engine walks the rows once, and aggregates keep their partial states in buffer slots. No string has been decoded yet.
       </div>
     </div>
   );

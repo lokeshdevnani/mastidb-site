@@ -11,7 +11,7 @@ interface Technique {
 const techniques: Technique[] = [
   {
     number: "01",
-    title: "Columnar Segments & Fixed Addressing",
+    title: "Columnar segments and fixed addressing",
     problem: "Row storage reads every column off disk, even the ones the query never asks for.",
     solution: "Each column lives in its own immutable file, and every row ID is a fixed 4-byte integer, so row i is found by arithmetic (offset + i * 4) rather than by walking an index.",
     tradeoff: "Costs 4 bytes per row even for columns with only a handful of distinct values, and it is a poor fit for single-row OLTP work.",
@@ -19,7 +19,7 @@ const techniques: Technique[] = [
   },
   {
     number: "02",
-    title: "Sorted Dictionary Encoding",
+    title: "Sorted dictionary encoding",
     problem: "Storing the same strings again on every row wastes space, and comparing them in Python is slow.",
     solution: "Each distinct string is stored once in a sorted dictionary. Queries find a value by binary search in O(log N), and ORDER BY on a string column sorts integers instead of strings.",
     tradeoff: "Columns with many distinct values make the dictionary large, and numbers are still stored as strings today, so SUM and AVG parse a float per row.",
@@ -27,7 +27,7 @@ const techniques: Technique[] = [
   },
   {
     number: "03",
-    title: "Roaring Bitmap Indexing",
+    title: "Roaring Bitmap indexing",
     problem: "Checking a WHERE clause row by row means reading every row in the table.",
     solution: "Ingestion builds a compressed Roaring Bitmap for every distinct value. An equality filter is then one bitmap lookup, and AND and OR are bitwise intersection and union.",
     tradeoff: "The bitmaps add roughly 15 to 40% to segment size. Filtering is equality-only today; ranges and inequalities are not indexed yet.",
@@ -35,7 +35,7 @@ const techniques: Technique[] = [
   },
   {
     number: "04",
-    title: "Late Materialization",
+    title: "Late materialization",
     problem: "Turning IDs back into strings for rows that never reach the output is work thrown away.",
     solution: "Columns stay as integer IDs through filtering, grouping, and sorting. Only the rows that survive LIMIT, or the distinct output groups, are decoded back into strings.",
     tradeoff: "A non-aggregate query with a large LIMIT ends up doing many random seeks into the dictionary files to materialize its columns.",
@@ -43,7 +43,7 @@ const techniques: Technique[] = [
   },
   {
     number: "05",
-    title: "Mergeable Partial Aggregation",
+    title: "Mergeable partial aggregation",
     problem: "Every segment has its own dictionary, so partial results from two segments cannot simply be concatenated.",
     solution: "Each segment returns an AggregatePartial whose merge() is associative and commutative. AVG, for instance, carries (sum, count) until the very end, so partials from any number of segments combine safely.",
     tradeoff: "Group keys have to be decoded to strings before they cross a segment boundary, since two segments map the same string to different IDs.",
@@ -51,7 +51,7 @@ const techniques: Technique[] = [
   },
   {
     number: "06",
-    title: "MyPyC Ahead-of-Time Compilation",
+    title: "MyPyC ahead-of-time compilation",
     problem: "Interpreter overhead and dynamic dispatch dominate the cost of a tight inner loop in Python.",
     solution: "The hot inner loops are type-annotated and compiled to native C extensions with MyPyC, which cut runtime by about 60% without changing a single algorithm.",
     tradeoff: "Needs a C compiler at install time (it falls back to pure Python without one) and holds the compiled modules to strict static types.",
@@ -104,7 +104,7 @@ const techniques: Technique[] = [
             <!-- What problem arises -->
             <div class="mb-3.5">
               <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--muted)] mb-1">
-                The Problem
+                The problem
               </div>
               <p class="text-xs text-[var(--ink)] leading-relaxed">
                 {t.problem}
@@ -114,7 +114,7 @@ const techniques: Technique[] = [
             <!-- What MastiDB does -->
             <div class="mb-3.5">
               <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--brand)] mb-1">
-                What MastiDB Does
+                What MastiDB does
               </div>
               <p class="text-xs text-[var(--ink)] leading-relaxed">
                 {t.solution}
@@ -125,7 +125,7 @@ const techniques: Technique[] = [
           <!-- What it costs or limits -->
           <div class="mt-4 border-t border-[var(--line)] bg-[var(--surface-tint)] -mx-6 -mb-6 sm:-mx-7 sm:-mb-7 px-6 sm:px-7 py-4 rounded-b-2xl">
             <div class="text-[10px] font-mono uppercase tracking-wider font-bold text-[var(--encoded-coral)] mb-1">
-              The Cost / Limitation
+              What it costs
             </div>
             <p class="text-xs text-[var(--muted)] leading-relaxed">
               {t.tradeoff}

@@ -21,15 +21,15 @@ import { ColumnExplorer } from './ColumnExplorer';
       <ul class="space-y-2.5 text-xs sm:text-sm text-[var(--muted)] max-w-2xl mb-4">
         <li class="flex items-start gap-2.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[var(--brand)] mt-2 shrink-0"></span>
-          <span><strong class="text-[var(--ink)] font-semibold">Dual-file segment layout:</strong> A 40-byte header (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">.meta</code>) defines ten 32-bit byte boundaries; an unpadded payload file (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">.mastidb</code>) stores the data.</span>
+          <span>A 40-byte header (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">.meta</code>) defines ten 32-bit byte boundaries, and an unpadded payload file (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">.mastidb</code>) stores the data.</span>
         </li>
         <li class="flex items-start gap-2.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[var(--brand)] mt-2 shrink-0"></span>
-          <span><strong class="text-[var(--ink)] font-semibold">Contiguous address space:</strong> Dictionary offsets, sorted UTF-8 values, encoded row IDs, and Roaring Bitmaps sit back-to-back, with no padding between them.</span>
+          <span>Inside that payload, dictionary offsets, sorted UTF-8 values, encoded row IDs, and Roaring Bitmaps sit back-to-back, with no padding between them.</span>
         </li>
         <li class="flex items-start gap-2.5">
           <span class="w-1.5 h-1.5 rounded-full bg-[var(--brand)] mt-2 shrink-0"></span>
-          <span><strong class="text-[var(--ink)] font-semibold">O(1) arithmetic addressing:</strong> Because every row ID is exactly 4 bytes, row <em class="italic">i</em> is found by arithmetic (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">offset + i × 4</code>). No index to walk, no pointers to follow.</span>
+          <span>Because every row ID is exactly 4 bytes, row <em class="italic">i</em> is found by arithmetic (<code class="font-mono text-xs bg-[var(--surface)] border border-[var(--line)] px-1.5 py-0.5 rounded text-[var(--ink)]">offset + i × 4</code>) instead of by walking an index or following pointers.</span>
         </li>
       </ul>
     </div>
