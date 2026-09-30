@@ -1,0 +1,41 @@
+# MastiDB
+
+> MastiDB is a minimal, on-disk columnar OLAP database engine written in Python. It implements the core ideas that make analytical engines fast, at a size you can read in an afternoon. It is an experimental learning project, not a production database.
+
+Canonical site: https://mastidb.com
+Source code: https://github.com/lokeshdevnani/mastidb (MIT licence)
+Package: https://pypi.org/project/mastidb/ (`pip install mastidb`)
+Author: Lokesh Devnani
+
+## How it works
+
+- Columnar storage: each column is stored as a 40-byte header (`.meta`) and a memory-mapped payload (`.mastidb`). Only the columns a query names are read.
+- Dictionary encoding: values are stored once in a sorted dictionary and rows hold fixed-width integer IDs, so row i is found by arithmetic rather than an index walk.
+- Roaring Bitmaps: each distinct value has a bitmap of matching rows, so a WHERE clause becomes a bitmap lookup instead of a row scan.
+- Late materialisation: aggregation runs on integer IDs and strings are decoded only for the groups that survive.
+- Independent segments: each segment answers a query on its own and returns a partial result that merges with the others.
+- Hot loops are compiled with MyPyC.
+
+## What works today
+
+- SQL: SELECT, WHERE (equality, AND, OR), GROUP BY, ORDER BY, LIMIT, and COUNT, SUM, AVG.
+- A command-line tool (`mastidb demo wikipedia`, `mastidb query`) and an embeddable Python API (`Table`, `QueryExecutor`).
+
+## Known limitations
+
+- Every column is stored as a string today; numeric types are on the roadmap.
+- WHERE supports exact equality only: no ranges, inequalities or IN lists.
+- Segments are scanned sequentially, not in parallel.
+- COUNT(DISTINCT) across segments has a known correctness bug.
+- Ingestion rewrites the whole directory; joins and subqueries are out of scope.
+
+## Important pages
+
+- Home: https://mastidb.com/
+- The story: https://mastidb.com/#how-it-works
+- Follow a query through the engine: https://mastidb.com/#query-trace
+- On-disk file format: https://mastidb.com/#segment
+- Design trade-offs: https://mastidb.com/#techniques
+- Project status: https://mastidb.com/#status
+- Architecture deep dive: https://github.com/lokeshdevnani/mastidb/blob/main/ARCHITECTURE.md
+- Roadmap: https://github.com/lokeshdevnani/mastidb/blob/main/ROADMAP.md
