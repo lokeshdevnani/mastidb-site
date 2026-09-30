@@ -108,6 +108,7 @@ export function ColumnExplorer() {
                       <div className="col-span-8">
                         <input
                           type="text"
+                          aria-label={`countryName value for row ${idx}`}
                           value={val}
                           onChange={(e) => updateRow(idx, e.target.value)}
                           className={`w-full bg-transparent outline-none transition-colors font-medium ${

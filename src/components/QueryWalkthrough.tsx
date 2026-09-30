@@ -242,9 +242,9 @@ export function QueryWalkthrough() {
 
           {/* Focused Stage Explanation */}
           <div className="p-5 rounded-2xl bg-[var(--surface-tint)] border border-[var(--line)]">
-            <h4 className="text-xs font-mono font-bold text-[var(--brand)] uppercase tracking-wider mb-2">
+            <h3 className="text-xs font-mono font-bold text-[var(--brand)] uppercase tracking-wider mb-2">
               How Stage {stage.id} Works
-            </h4>
+            </h3>
             <p className="text-sm text-[var(--ink)] leading-relaxed mb-3">
               {stage.explanation}
             </p>
@@ -418,8 +418,8 @@ function StageVisualParse() {
 
         <div className="p-4 rounded-xl bg-[var(--surface-tint)] border border-[var(--line)]">
           <div className="text-[var(--muted)] font-bold mb-1">Unreferenced Columns</div>
-          <div className="text-sm font-bold text-slate-400 line-through">added, deleted, user, flags</div>
-          <div className="text-[11px] text-emerald-600 font-semibold mt-2">0 bytes read from disk</div>
+          <div className="text-sm font-bold text-[var(--muted)] line-through">added, deleted, user, flags</div>
+          <div className="text-[11px] text-emerald-700 font-semibold mt-2">0 bytes read from disk</div>
         </div>
       </div>
     </div>
@@ -577,27 +577,27 @@ function StageVisualBatchedFetch() {
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 0</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 7</div>
-            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
+            <div className="col-span-5 text-right text-emerald-700">Kept as integer</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 2</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 3</div>
-            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
+            <div className="col-span-5 text-right text-emerald-700">Kept as integer</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 79</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 7</div>
-            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
+            <div className="col-span-5 text-right text-emerald-700">Kept as integer</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 142</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 9</div>
-            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
+            <div className="col-span-5 text-right text-emerald-700">Kept as integer</div>
           </div>
           <div className="grid grid-cols-12 px-4 py-2 bg-[var(--surface)]">
             <div className="col-span-3 font-semibold">Row 305</div>
             <div className="col-span-4 font-bold text-[var(--brand)]">ID 3</div>
-            <div className="col-span-5 text-right text-emerald-600">Kept as integer</div>
+            <div className="col-span-5 text-right text-emerald-700">Kept as integer</div>
           </div>
         </div>
       </div>

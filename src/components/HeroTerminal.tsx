@@ -119,21 +119,21 @@ print(results.get_results())
           }`}
         >
           <div>
-            <span className="text-slate-500"># 1. Install (MyPyC-compiled hot loops)</span>
+            <span className="text-slate-400"># 1. Install (MyPyC-compiled hot loops)</span>
             <div className="flex items-center justify-between text-slate-100">
               <span><span className="text-indigo-400 select-none">$ </span>pip install mastidb</span>
             </div>
           </div>
 
           <div className="pt-1">
-            <span className="text-slate-500"># 2. Ingest Wikipedia sample (~24k edits)</span>
+            <span className="text-slate-400"># 2. Ingest Wikipedia sample (~24k edits)</span>
             <div className="text-slate-100">
               <span className="text-indigo-400 select-none">$ </span>mastidb demo wikipedia
             </div>
           </div>
 
           <div className="pt-1">
-            <span className="text-slate-500"># 3. Fast columnar query execution</span>
+            <span className="text-slate-400"># 3. Fast columnar query execution</span>
             <div className="text-slate-100">
               <span className="text-indigo-400 select-none">$ </span>mastidb query -d /tmp/wikipedia \
               <br />
@@ -168,7 +168,7 @@ print(results.get_results())
             tab === 'python' ? 'opacity-100' : 'opacity-0 invisible pointer-events-none'
           }`}
         >
-          <span className="text-slate-500"># Embedded analytical query execution in Python</span>
+          <span className="text-slate-400"># Embedded analytical query execution in Python</span>
           <div><span className="text-indigo-400 font-semibold">from</span> mastidb <span className="text-indigo-400 font-semibold">import</span> Table, QueryExecutor</div>
           <div className="text-slate-600 py-1"># Memory-mapped columnar segment read</div>
           <div>table = Table.from_data_dir(<span className="text-emerald-300">'/tmp/wikipedia'</span>)</div>
