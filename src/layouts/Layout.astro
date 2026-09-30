@@ -16,6 +16,26 @@ const cfAnalyticsToken = import.meta.env.PUBLIC_CF_ANALYTICS_TOKEN;
 // Absolute URLs, required by Open Graph and Twitter - relative paths are ignored by crawlers
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL('/og-card.png', Astro.site);
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': 'https://mastidb.com/#website', url: 'https://mastidb.com', name: 'MastiDB', description },
+    {
+      '@type': 'SoftwareSourceCode',
+      '@id': 'https://mastidb.com/#software',
+      name: 'MastiDB',
+      description,
+      url: 'https://mastidb.com',
+      codeRepository: 'https://github.com/lokeshdevnani/mastidb',
+      programmingLanguage: 'Python',
+      runtimePlatform: 'Python',
+      license: 'https://opensource.org/licenses/MIT',
+      image: ogImageUrl.href,
+      author: { '@type': 'Person', name: 'Lokesh Devnani', url: 'https://lokesh.me' },
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -55,6 +75,7 @@ const ogImageUrl = new URL('/og-card.png', Astro.site);
     />
 
     <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   </head>
   <body class="bg-[var(--surface)] text-[var(--ink)] antialiased min-h-screen flex flex-col">
     <a
